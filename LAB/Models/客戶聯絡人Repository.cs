@@ -13,14 +13,23 @@ namespace LAB.Models
 
         public override IQueryable<客戶聯絡人> All()
         {
-            return this.All(includeDeleted: false);
+            return this.All(jobTitle:"", includeDeleted: false);
         }
 
-        public IQueryable<客戶聯絡人> All(bool includeDeleted = false)
+        public IQueryable<客戶聯絡人> All(string jobTitle = "", bool includeDeleted = false)
         {
-            return includeDeleted
-                ? base.All()
-                : base.All().Where(c => !c.IsDeleted);
+            if (string.IsNullOrEmpty(jobTitle))
+            {
+                return includeDeleted
+                    ? base.All()
+                    : base.All().Where(c => !c.IsDeleted);
+            }
+            else
+            {
+                return
+                    base.Where(c => string.IsNullOrEmpty(jobTitle) || c.職稱 == jobTitle)
+                        .Where(c => !includeDeleted || !c.IsDeleted);
+            }
         }
 
         public override void Delete(客戶聯絡人 entity)

@@ -7,21 +7,12 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using LAB.Models;
+using System.Web.Security;
 
 namespace LAB.Controllers
 {
     public class CustomerController : BaseController
     {
-
-        // GET: 客戶資料
-        public ActionResult Index()
-        {
-            var isSysAdmin = User.IsInRole("sysadmin");
-
-            var 客戶資料 = RepoCust.All();
-            return View(客戶資料.ToList());
-        }
-
         // GET: 客戶資料/Details/5
         public ActionResult Details(int? id)
         {
@@ -61,6 +52,8 @@ namespace LAB.Controllers
             return View(客戶資料);
         }
 
+        [OverrideAuthorization()]
+        [Authorize]
         // GET: 客戶資料/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -73,23 +66,39 @@ namespace LAB.Controllers
             {
                 return HttpNotFound();
             }
+            客戶資料.PWD = string.Empty;
             return View(客戶資料);
         }
 
         // POST: 客戶資料/Edit/5
         // 若要免於過量張貼攻擊，請啟用想要繫結的特定屬性，如需
         // 詳細資訊，請參閱 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [OverrideAuthorization()]
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類Id")] 客戶資料 客戶資料)
+        public ActionResult Edit(int id, FormCollection form)
         {
-            if (ModelState.IsValid)
+            var customer = RepoCust.Find(id);
+            
+            if(TryUpdateModel(customer, "客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類Id,Account".Split(',')))
             {
-                RepoCust.UnitOfWork.Context.Entry(客戶資料).State = EntityState.Modified;
+                if (!string.IsNullOrEmpty(form["PWD"]))
+                {
+                    customer.PWD = FormsAuthentication.HashPasswordForStoringInConfigFile(form["PWD"], "SHA1");
+                }
+
                 RepoCust.UnitOfWork.Commit();
-                return RedirectToAction("Index");
+                ViewBag.IsCommitted = true;
+
+                if (User.IsInRole("sysadmin"))
+                {
+                    return RedirectToAction("Index");
+                }               
             }
-            return View(客戶資料);
+
+            customer.PWD = string.Empty;
+            return View(customer);
         }
 
         // GET: 客戶資料/Delete/5
@@ -118,6 +127,17 @@ namespace LAB.Controllers
             return RedirectToAction("Index");
         }
 
-        
+
+
+        // GET: 客戶資料
+        public ActionResult Index()
+        {
+            //var isSysAdmin = User.IsInRole("sysadmin");
+
+            var cust = RepoCust.All();
+            return View(cust);
+        }
+
+
     }
 }

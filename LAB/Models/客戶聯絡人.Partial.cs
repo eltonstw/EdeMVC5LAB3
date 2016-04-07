@@ -19,6 +19,7 @@ namespace LAB.Models
                     yield return new ValidationResult("同一個客戶下的聯絡人，Email不能重複。", new string[] { "Email" });
                 }
             }
+            
         }
     }
 

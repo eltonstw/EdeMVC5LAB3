@@ -2,79 +2,125 @@
 
 @{
     ViewBag.Title = "Edit";
+    ViewBag.IsAdmin = this.User.IsInRole("sysadmin");
 }
 
-<h2>Edit</h2>
+
+@section pageheader{
+    客戶資料
+    }
+
+@section breadcrumb{
+    <li><i class="fa fa-laptop"></i>客戶資料</li>
+    }
 
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.Id)
     
-    <div class="form-horizontal">
-        <h4>客戶資料</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+    <!-- Basic Forms & Horizontal Forms-->
+    <div class="row">
+        <div class="col-lg-8">
+            <section class="panel">
+                <header class="panel-heading">
+                    @if (ViewBag.IsCommitted != null && ViewBag.IsCommitted)
+                    {
+                        <span style="color: darkgoldenrod">客戶資料更新成功</span>
+                    }
+                </header>
+                <div class="panel-body">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.客戶名稱)
+                        @if (ViewBag.IsAdmin)
+                        {
+                            @Html.EditorFor(model => model.客戶名稱, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.客戶名稱, "", new { @class = "text-danger" })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.客戶名稱)
+                        }                        
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.統一編號)
+                        @if (ViewBag.IsAdmin)
+                        {
+                            @Html.EditorFor(model => model.統一編號, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.統一編號, "", new { @class = "text-danger" })
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(model => model.統一編號)
+                        }
+                    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.客戶名稱, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.客戶名稱, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.客戶名稱, "", new { @class = "text-danger" })
-            </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.電話)
+                        @Html.EditorFor(model => model.電話, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.電話, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                                                @Html.LabelFor(model => model.傳真)
+                                                @Html.EditorFor(model => model.傳真, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.傳真, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                                                @Html.LabelFor(model => model.地址)
+                                                @Html.EditorFor(model => model.地址, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.地址, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                                                @Html.LabelFor(model => model.Email)
+                                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    </div>
+
+                    <div class="form-group">
+                                                @Html.LabelFor(model => model.Account)
+                                                @if (ViewBag.IsAdmin)
+                                                {
+                                                    @Html.EditorFor(model => model.Account, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Account, "", new { @class = "text-danger" })
+                                                }
+                                                else
+                                                {
+                                                    @Html.DisplayFor(model => model.Account)
+                                                }
+                    </div>
+
+                    <div class="form-group">
+                                                @Html.LabelFor(model => model.PWD)
+                                                @Html.EditorFor(model => model.PWD, new { htmlAttributes = new { @class = "form-control" } })
+                                                @Html.ValidationMessageFor(model => model.PWD, "", new { @class = "text-danger" })
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save</button>
+
+                </div>
+            </section>
         </div>
+        <div class="col-lg-4">
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.統一編號, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.統一編號, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.統一編號, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.電話, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.電話, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.電話, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.傳真, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.傳真, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.傳真, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.地址, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.地址, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.地址, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
         </div>
     </div>
+
+
+
+
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    @if (ViewBag.IsAdmin)
+    {
+        @Html.ActionLink("Back to List", "Index")
+    }
 </div>
 
 @section Scripts {

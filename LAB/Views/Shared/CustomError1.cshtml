@@ -1,0 +1,8 @@
+﻿@model System.Web.Mvc.HandleErrorInfo
+
+<hgroup>
+    <h3>@Model.Exception.GetType().ToString()</h3>
+    <h4>@Model.Exception.Message</h4>
+</hgroup>
+
+<pre>@Model.Exception.StackTrace</pre>

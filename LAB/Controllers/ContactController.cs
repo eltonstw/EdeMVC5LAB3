@@ -7,19 +7,13 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using LAB.Models;
-
+using System.Linq.Expressions;
+using PagedList;
 
 namespace LAB.Controllers
 {
     public class ContactController : BaseController
     {
-        // GET: 客戶聯絡人
-        public ActionResult Index()
-        {
-            var 客戶聯絡人 = RepoContact.All().Include(客 => 客.客戶資料);
-            return View(客戶聯絡人.ToList());
-        }
-
         // GET: 客戶聯絡人/Details/5
         public ActionResult Details(int? id)
         {
@@ -118,6 +112,76 @@ namespace LAB.Controllers
             RepoContact.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
+
+
+        // GET: 客戶聯絡人
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Contacts(int? page, string jobTitle = "", string sortBy = "", string sort = "")
+        {
+            if (string.IsNullOrEmpty(sortBy)) { sortBy = "姓名"; }
+
+            var contacts = RepoContact.All(jobTitle).Include(客 => 客.客戶資料);
+
+            if (sortBy == "客戶名稱")
+            {
+                if (sort.StartsWith("desc"))
+                {
+                    contacts = contacts.OrderByDescending(c => c.客戶資料.客戶名稱);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(c => c.客戶資料.客戶名稱);
+                }
+            }
+            else
+            {
+                var param = Expression.Parameter(typeof(客戶聯絡人), "customer");
+                var sortExp = Expression.Lambda<Func<客戶聯絡人, object>>(Expression.Property(param, sortBy), param);
+
+                if (sort.StartsWith("desc"))
+                {
+                    contacts = contacts.OrderByDescending(sortExp);
+                }
+                else
+                {
+                    contacts = contacts.OrderBy(sortExp);
+                }
+            }
+
+
+            var pageNumber = page ?? 1;
+            var pageSize = 2;
+            var onePaeeOfContacts = contacts.ToPagedList(pageNumber, pageSize);
+            ViewBag.OnePageOfContacts = onePaeeOfContacts;
+
+
+            return PartialView("ContactListPartial");
+        }
+            
         
+
+
+        [HttpPost]
+        public ActionResult GetAllJobTitles()
+        {
+            var allJobTitles = RepoContact.All().Select(c => c.職稱).Distinct();
+            return this.Json(allJobTitles);
+        }
+
+        [HandleError(ExceptionType = typeof(InvalidOperationException), View = "CustomError1")]
+        public ActionResult Error1()
+        {
+            throw new InvalidOperationException();
+        }
+
+        public ActionResult Error2()
+        {
+            throw new InvalidProgramException();
+        }
     }
 }

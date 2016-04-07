@@ -8,56 +8,153 @@
 
 <p>
     @Html.ActionLink("Create New", "Create")
+    <span style="background-color: lightgray; margin: 0 7px 0 7px">
+        @Html.ActionLink("Error1", "Error1")
+    </span>
+    @Html.ActionLink("Default Error Page", "Error2")    
 </p>
+
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.職稱)
+            <span id="jtt" class="contactTh" sortby="@Html.DisplayNameFor(model => model.職稱)">
+                @Html.DisplayNameFor(model => model.職稱)
+            </span>
+            <select id="jobTitlesSel" name="jobTitlesSel"></select>
         </th>
-        <th>
+        <th id="nt" class="contactTh" sortby="@Html.DisplayNameFor(model => model.姓名)">
             @Html.DisplayNameFor(model => model.姓名)
         </th>
-        <th>
+        <th id="et" class="contactTh" sortby="@Html.DisplayNameFor(model => model.Email)">
             @Html.DisplayNameFor(model => model.Email)
         </th>
-        <th>
+        <th id="mt" class="contactTh" sortby="@Html.DisplayNameFor(model => model.手機)">
             @Html.DisplayNameFor(model => model.手機)
         </th>
-        <th>
+        <th id="pt" class="contactTh" sortby="@Html.DisplayNameFor(model => model.電話)">
             @Html.DisplayNameFor(model => model.電話)
         </th>
-        <th>
+        <th id="cnt" class="contactTh" sortby="@Html.DisplayNameFor(model => model.客戶資料.客戶名稱)">
             @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
         </th>
         <th></th>
     </tr>
+    <tbody id="contactList">
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.職稱)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.姓名)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.手機)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.電話)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
+    </tbody>
+</table>
+
+<div id="pagedPager"></div>
+
+
+
+@section styles{
+    <style>
+        .contactTh {
+            cursor: pointer;
+        }
+    </style>    
 }
 
-</table>
+@section scripts {
+    <script type="text/javascript">
+        //<![CDATA[
+
+        var lab = lab || {};
+        lab.selectedJobTitle = '';
+        lab.sort = '';
+        lab.sortBy = '';
+        lab.sortClass = ["glyphicon glyphicon-sort-by-alphabet", "glyphicon glyphicon-sort-by-alphabet-alt"];
+        lab.allTh = ["jtt", "nt", "et", "mt", "pt", "cnt"];
+        
+
+        lab.onJobTitleChanged = function (t,p) {
+            var $clDiv = $("#contactList");
+            $.ajax({
+                url: '@Url.Action("Contacts", "Contact")',
+                type: 'POST',
+                data: { jobTitle: t, sortBy: lab.sortBy, sort: lab.sort, page: p },
+                cache: false,
+                async: false,
+                success: function (data) {
+                    $clDiv.empty();
+                    if (data) {
+                        $clDiv.html(data);
+                        if ($(".pager").length > 0) {
+                            $("#pagedPager").html($(".pager").html());
+                            $(".pager").remove();
+                        }
+
+                        $('#pagedPager .pagination li a').each(function (i, item) {
+                            var hyperLinkUrl = $(item).attr('href');
+                            if (hyperLinkUrl) {
+                                var page = $(item).attr('href').replace('/Contact?page=', '');
+                                $(item).attr('href', '#').click(function (event) {
+                                    event.preventDefault();
+                                    $(event.target).attr('href');
+                                    lab.onJobTitleChanged(lab.selectedJobTitle, page);
+                                });
+                            }
+                        });
+                    }
+                }
+            });           
+        };
+        
+
+        $(function () {
+
+            lab.onJobTitleChanged();
+
+
+            $.each(lab.allTh, function (i,n) {
+                $("#" + n).click(function () {
+                    var t = $(this).attr("sortby");
+                    if (lab.sortBy === t) {
+                        lab.sort = (lab.sort) && lab.sort === "asc" ? "desc" : "asc";
+                    } else {
+                        lab.sort = "asc";
+                    }
+                    lab.sortBy = t;
+                    
+                    lab.onJobTitleChanged(lab.selectedJobTitle);
+
+                    $("#sorticon").remove();
+                    $('<span id="sorticon"></span>')
+                        .attr("class", lab.sort === "asc" ? lab.sortClass[0] : lab.sortClass[1])
+                        .appendTo($(this));
+
+                });
+            });
+
+            
+
+            var $jobTitlesSel = $("#jobTitlesSel");
+            $.ajax({
+                url: '@Url.Action("GetAllJobTitles", "Contact")',
+                type: 'POST',
+                cache: false,
+                async: false,
+                dataType: 'JSON',
+                success: function (data) {
+                    $jobTitlesSel.empty();
+
+                    if (data.length > 0) {
+                        $jobTitlesSel.append($('<option></option>').val('').text(''));
+                        $.each(data, function (i, t) {
+                            $jobTitlesSel.append($('<option></option>').val(t).text(t));
+                        });
+                        $jobTitlesSel.val(lab.selectedJobTitle);
+                    }
+                }
+            });
+
+            $jobTitlesSel.change(function () {
+                lab.selectedJobTitle = $(this).val();
+                lab.onJobTitleChanged($(this).val());
+            });
+        });
+
+        //]]>
+    </script>
+}
