@@ -4,7 +4,14 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+
+@section pageheader{
+    客戶聯絡人
+}
+
+@section breadcrumb{
+    <li><i class="fa fa-laptop"></i>客戶聯絡人</li>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -49,6 +56,7 @@
 
 
 @section styles{
+@Styles.Render("~/Content/css")
     <style>
         .contactTh {
             cursor: pointer;
@@ -77,6 +85,7 @@
                 cache: false,
                 async: false,
                 success: function (data) {
+                    
                     $clDiv.empty();
                     if (data) {
                         $clDiv.html(data);
@@ -103,7 +112,7 @@
         
 
         $(function () {
-
+            
             lab.onJobTitleChanged();
 
 

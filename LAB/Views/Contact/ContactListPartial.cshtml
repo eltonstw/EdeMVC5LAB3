@@ -1,0 +1,37 @@
+﻿@using PagedList.Mvc; 
+@using PagedList; 
+
+
+@foreach (var item in ViewBag.OnePageOfContacts)
+{
+    <tr>
+        <td>
+            @item.職稱
+        </td>
+        <td>
+            @item.姓名
+        </td>
+        <td>
+            @item.Email
+        </td>
+        <td>
+            @item.手機
+        </td>
+        <td>
+            @item.電話
+        </td>
+        <td>
+            @item.客戶資料.客戶名稱
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+            <div class="pager" style="display: none;">
+                @Html.PagedListPager((IPagedList)ViewBag.OnePageOfContacts, page => Url.Action("Index", new { page }))
+            </div>
+        </td>
+    </tr>
+}
+
+

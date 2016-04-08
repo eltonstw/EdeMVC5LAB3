@@ -1,5 +1,13 @@
 ﻿@model System.Web.Mvc.HandleErrorInfo
 
+@section pageheader{
+    Custom Error Page
+}
+
+@section breadcrumb{
+    <li><i class="fa fa-laptop"></i>Error</li>
+}
+
 <hgroup>
     <h3>@Model.Exception.GetType().ToString()</h3>
     <h4>@Model.Exception.Message</h4>

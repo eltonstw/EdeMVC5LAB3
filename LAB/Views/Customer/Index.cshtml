@@ -4,7 +4,13 @@
     ViewBag.Title = "Index";
 }
 
-<h2>Index</h2>
+@section pageheader{
+    客戶資料
+}
+
+@section breadcrumb{
+    <li><i class="fa fa-laptop"></i>客戶資料</li>
+}
 
 <p>
     @Html.ActionLink("Create New", "Create")

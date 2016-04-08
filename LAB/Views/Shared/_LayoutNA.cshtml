@@ -47,6 +47,8 @@
       <script src="~/js/respond.min.js"></script>
       <script src="~/js/lte-ie7.js"></script>
     <![endif]-->
+
+    @RenderSection("styles", required: false)
 </head>
 
 <body>
@@ -60,7 +62,7 @@
             </div>
 
             <!--logo start-->
-            <a href="index.html" class="logo">MVC <span class="lite">LAB</span></a>
+            <a href="@Url.Action("Index","Home")" class="logo">MVC <span class="lite">LAB</span></a>
             <!--logo end-->
 
             <div class="nav search-row" id="top_menu">
@@ -340,13 +342,13 @@
                             </a>
                         </li>
                         <li>
-                            <a class="" href="widgets.html">
+                            <a class="" href="@Url.Action("Index","Customer")">
                                 <i class="icon_genius"></i>
                                 <span>客戶資料</span>
                             </a>
                         </li>
                         <li>
-                            <a class="" href="chart-chartjs.html">
+                            <a class="" href="@Url.Action("Index","Contact")">
                                 <i class="icon_piechart"></i>
                                 <span>聯絡人</span>
                             </a>

@@ -781,6 +781,7 @@
     <Content Include="profile.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Views\Contact\ContactListPartial.cshtml" />
     <Content Include="widgets.html" />
     <EntityDeploy Include="Models\CustomerModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
@@ -947,7 +948,6 @@
     <Content Include="Views\Contact\Details.cshtml" />
     <Content Include="Views\Contact\Edit.cshtml" />
     <Content Include="Views\Contact\Index.cshtml" />
-    <Content Include="Views\Contact\ContactListPartial.cshtml" />
     <Content Include="Views\Shared\CustomError1.cshtml" />
     <Content Include="Views\Shared\_LayoutNA.cshtml" />
   </ItemGroup>
